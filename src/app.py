@@ -10,14 +10,26 @@ from api.models import db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-
-# from models import Person
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+
+
+CORS(app, resources={r"/*": {"origins": "*"}})   # para permitir todos los origenes
+
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
+app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
+JWTManager(app)
 app.url_map.strict_slashes = False
+
+
+
+
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")

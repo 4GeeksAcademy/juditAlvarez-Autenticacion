@@ -33,6 +33,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error loading message from backend", error)
 				}
 			},
+
+
+			login: async (email, password, setError) => {
+				try {
+					if (!email || !password) {
+						setError('Por favor, ingresa tu correo electrónico y contraseña.');
+
+					}
+					const response = await fetch(process.env.BACKEND_URL + "/api/login", {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+
+						body: JSON.stringify({
+							email: email,
+							password: password
+						})
+					});
+
+					if (!response.ok) {
+						const errorData = await response.json();
+						const errorMessage = errorData.message || 'Email o contraseña incorrectos';
+						setError({ general: errorMessage });
+
+						return false;
+					}
+					const data = await response.json();
+					const token = data.access_token;
+					if (!token) {
+						throw new Error('Token no recibido en la respuesta de inicio de sesión');
+					}
+
+					localStorage.setItem('authToken', token);
+					setStore({ user: data.user, authToken: token });  // judit actualiza el estado del usuario
+					return true;
+
+				} catch (error) {
+					setError(error.message);
+				}
+
+			},
+
+
+			
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
