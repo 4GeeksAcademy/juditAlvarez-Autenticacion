@@ -1,15 +1,17 @@
-import bcrypt
+from flask import Flask
+
+
 from flask import request, jsonify, Blueprint
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
-from werkzeug.security import generate_password_hash, check_password_hash
-from .models import db, Usuarios, Movimientos, Alertas_programadas, Objetivo, Eventos
-from .utils import generate_sitemap, APIException, generate_random_password
+from flask_jwt_extended import create_access_token
+from api.models import db
 from flask_cors import CORS
 from flask_migrate import Migrate
+
+
 app = Flask(__name__)
 CORS(app)  # Permitir CORS para todas las rutas
 
-bcrypt = Bcrypt(app)
+
 
 api = Blueprint('api', __name__)
 
